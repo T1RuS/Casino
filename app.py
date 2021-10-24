@@ -1,12 +1,12 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
-from Classes import Message, User
-from init import *
+from Classes import *
 
 
 @app.route('/', methods=['GET'])
 def hello_world():
+    print(1)
     return render_template('index.html')
 
 
@@ -27,8 +27,10 @@ def add_message():
     return redirect(url_for('main'))
 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
+    print('1')
     login = request.form.get('login')
     password = request.form.get('password')
 
@@ -51,19 +53,20 @@ def login_page():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    login = request.form.get('login')
+    login1 = request.form.get('login')
     password = request.form.get('password')
     password2 = request.form.get('password2')
-
+    print('1')
     if request.method == 'POST':
-        if not (login or password or password2):
+        if not (login1 or password or password2):
             flash('Please, fill all fields!')
         elif password != password2:
             flash('Passwords are not equal!')
         else:
+            print('1')
             hash_pwd = generate_password_hash(password)
-            new_user = User(login=login, password=hash_pwd)
-            db.session.add(new_user)
+            user = User(login=login1, password=hash_pwd)
+            db.session.add(user)
             db.session.commit()
 
             return redirect(url_for('login_page'))
@@ -75,7 +78,6 @@ def register():
 @login_required
 def logout():
     logout_user()
-
     return redirect(url_for('hello_world'))
 
 

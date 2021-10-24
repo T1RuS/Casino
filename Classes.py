@@ -1,5 +1,15 @@
 from flask_login import UserMixin
-from init import db, manager
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+
+
+app = Flask(__name__)
+app.secret_key = '8762'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///MainDB.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+manager = LoginManager(app)
 
 
 class Message(db.Model):
@@ -21,10 +31,14 @@ class Tag(db.Model):
     message = db.relationship('Message', backref=db.backref('tags', lazy=True))
 
 
-class User (db.Model, UserMixin):
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(128), nullable=False, unique=True)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(512), nullable=False)
+
+
+
 
 
 @manager.user_loader
